@@ -1,28 +1,14 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  const { data: session } = authClient.useSession();
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(), // you need to pass the headers object.
+  });
+  if (!session?.user.email) {
+    redirect("/auth");
+  }
 
-  console.log("🚀 ~ Home ~ session:", session);
-  const handleLogin = async () => {
-    authClient.signIn.social({
-      provider: "google",
-    });
-  };
-
-  return (
-    <div>
-      {session?.user.email ? (
-        <div className="text-4xl font-bold text-center">
-          {session.user.email}
-        </div>
-      ) : (
-        <Button className="text-center" onClick={handleLogin}>
-          login
-        </Button>
-      )}
-    </div>
-  );
+  return <div>{session?.user.email}</div>;
 }
