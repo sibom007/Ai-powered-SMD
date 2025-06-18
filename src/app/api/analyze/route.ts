@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const HUGGINGFACE_API_URL =
-  "https://api-inference.huggingface.co/models/mrm8488/bert-tiny-finetuned-sms-spam-detection";
-const HUGGINGFACE_API_TOKEN = "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";
+const HUGGINGFACE_API_URL = process.env.NEXT_PUBLIC_HG_URL!;
+const HUGGINGFACE_API_TOKEN = process.env.HF_API_TOKEN!;
 
 export async function POST(req: Request) {
   const { message } = await req.json();
