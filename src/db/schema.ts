@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  numeric,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -59,3 +66,17 @@ export const verification = pgTable("verification", {
     () => /* @__PURE__ */ new Date()
   ),
 });
+
+export const msgStatusEnum = pgEnum("msg_status", ["scam", "good"]);
+
+export const messages = pgTable("messages", {
+  id: text("id").primaryKey(),
+  userId: text("id")
+    .notNull()
+    .references(() => user.id), // foreign key relation
+  message: text("message").notNull(),
+  score: numeric("score", { precision: 5, scale: 4 }).notNull(),
+  msgStatus: msgStatusEnum("msg_status").notNull(),
+});
+
+// Removed custom integer function as we now import it from drizzle-orm/pg-core

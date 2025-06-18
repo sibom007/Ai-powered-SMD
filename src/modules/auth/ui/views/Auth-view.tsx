@@ -8,13 +8,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
-import { Chrome, Shield, Sparkles, Zap } from "lucide-react";
+import { Chrome, Loader, Shield, Sparkles, Zap } from "lucide-react";
+import { useState } from "react";
 
 export function AuthView() {
-  const handleGoogleSignIn = () => {
-    authClient.signIn.social({
-      provider: "google",
-    });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+      });
+      // You can redirect or handle success here if needed
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      // Optionally show error UI or toast here
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,10 +76,15 @@ export function AuthView() {
           {/* Google Sign In Button */}
           <Button
             onClick={handleGoogleSignIn}
+            disabled={isLoading}
             className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md group"
             variant="outline">
-            <Chrome className="w-5 h-5 mr-3 text-primary group-hover:scale-110 transition-transform" />
-            Sign in to start protection
+            {isLoading ? (
+              <Loader className="animate-spin  w-6 h-6 text-primary" />
+            ) : (
+              <Chrome className="w-5 h-5 mr-3 text-primary group-hover:scale-110 transition-transform" />
+            )}
+            Sign in to start protection{" "}
           </Button>
 
           {/* Divider with decorative elements */}
